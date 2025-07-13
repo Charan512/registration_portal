@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registration</title>
+  <style>
+    header {
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+      font-weight: 500;
+      font-size: x-large;
+      background-color: orange;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 70px;
+      position: relative;
+    }
+    .logo {
+      position: absolute;
+      left: 15px;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+      height: 70px;
+    }
+    button {
+      border-radius: 8px;
+      height: 30px;
+      width: 90px;
+      font-size: medium;
+      align-self: center;
+      background-color: rgb(244, 232, 181);
+    }
+    button:hover {
+      cursor: pointer;
+      background-color: rgb(244, 192, 51);
+      transition: 0.2s ease-in-out;
+    }
+    form {
+      margin: 20px;
+      font-family: 'Times New Roman', Times, serif;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 0px;
+      margin-bottom: 10px;
+    }
+    .radio-group input[type="radio"] {
+      margin-right: 4px;
+    }
+    input, select {
+      background-color: rgb(168, 171, 170);
+    }
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      font-size: 17px;
+      opacity: 0;
+      transform: translateX(-50%);
+      transition: opacity 0.6s, bottom 0.6s;
+    }
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+      bottom: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div id="toast"></div>
+  <header>
+    <img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3_eQb1bwb-FBrRt1TwBDc4YGc8N1fuSziaA&s" alt="Logo" />
+    <div class="heading">Registration Verification</div>
+  </header>
+  <form id="regform">
+    <label>Candidate Name:</label>
+    <input type="text" name="name" required />
+    <div class="radio-group">
+        <label>Gender:</label><br />
+        <label><input type="radio" name="gender" value="Male" required /> Male</label>
+        <label><input type="radio" name="gender" value="Female" /> Female</label>
+    </div>
+    <label>Branch:</label>
+    <select name="branch" required>
+      <option value="" disabled selected>Select</option>
+      <option>CSE</option>
+      <option>AIML</option>
+      <option>CIC</option>
+      <option>ECE</option>
+      <option>EEE</option>
+      <option>Civil</option>
+      <option>Mech</option>
+    </select>
+    <div class="radio-group">
+      <label>Section:</label><br />
+      <label><input type="radio" name="section" value="A" required /> A</label>
+      <label><input type="radio" name="section" value="B" /> B</label>
+      <label><input type="radio" name="section" value="C" /> C</label>
+      <label><input type="radio" name="section" value="D" /> D</label>
+      <label><input type="radio" name="section" value="E" /> E</label>
+      <label><input type="radio" name="section" value="F" /> F</label>
+    </div>
+    <label>Mode of payment:</label>
+    <select name="payment" required>
+        <option value="" disabled selected>Select</option>
+        <option>Online</option>
+        <option>Offline</option>
+    </select>
+    <label>E-mail id:</label>
+    <input type="email" name="email" required />
+    <label>Contact:</label>
+    <input type="tel" name="phone" required />
+    <button type="submit">Register</button>
+  </form>
+  <script>
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "show";
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+      }, 3000);
+    }
+    document.getElementById("regform").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new URLSearchParams(new FormData(form)).toString();
+      fetch("/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: formData
+      })
+        .then((res) => res.text())
+        .then((message) => {
+          showToast(message);
+          form.reset();
+        })
+        .catch(() => {
+          showToast("Something went wrong");
+        });
+    });
+  </script>
+</body>
+</html>
